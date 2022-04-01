@@ -36,6 +36,9 @@ protocol AVPlayerWrapperProtocol: class {
     
     var isMuted: Bool { get set }
     
+    var isPlaying: Bool { get set }
+    var showSecond: Double { get set }
+    var audioDuration: Double { get set }
     var automaticallyWaitsToMinimizeStalling: Bool { get set }
         
     

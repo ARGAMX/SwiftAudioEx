@@ -35,6 +35,9 @@ class AVPlayerWrapper: AVPlayerWrapperProtocol {
     /**
      True if the last call to load(from:playWhenReady) had playWhenReady=true.
      */
+    fileprivate var _seconds: Double = 0.0
+    fileprivate var _duration: Double = 0.0
+    fileprivate var _isPlaying: Bool = false
     fileprivate var _playWhenReady: Bool = true
     fileprivate var _initialTime: TimeInterval?
     
@@ -86,20 +89,25 @@ class AVPlayerWrapper: AVPlayerWrapperProtocol {
     
     var currentTime: TimeInterval {
         let seconds = avPlayer.currentTime().seconds
+        self._seconds = seconds.isNaN ? 0 : seconds
         return seconds.isNaN ? 0 : seconds
     }
     
     var duration: TimeInterval {
         if let seconds = currentItem?.asset.duration.seconds, !seconds.isNaN {
+            _duration = seconds
             return seconds
         }
         else if let seconds = currentItem?.duration.seconds, !seconds.isNaN {
+            _duration = seconds
             return seconds
         }
         else if let seconds = currentItem?.loadedTimeRanges.first?.timeRangeValue.duration.seconds,
             !seconds.isNaN {
+            _duration = seconds
             return seconds
         }
+        _duration = 0.0
         return 0.0
     }
     
@@ -132,12 +140,19 @@ class AVPlayerWrapper: AVPlayerWrapperProtocol {
         set { avPlayer.isMuted = newValue }
     }
     
-    func play() {
-        avPlayer.play()
+    var isPlaying: Bool {
+        get { return _isPlaying }
+        set { _isPlaying = newValue }
     }
     
-    func pause() {
-        avPlayer.pause()
+    var showSecond: Double {
+        get { return _seconds }
+        set { _seconds = newValue }
+    }
+    
+    var audioDuration: Double {
+        get { return _duration }
+        set { _duration = newValue }
     }
     
     func togglePlaying() {
@@ -338,4 +353,23 @@ extension AVPlayerWrapper: AVPlayerItemObserverDelegate {
         self.delegate?.AVWrapper(didUpdateDuration: duration)
     }
     
+}
+
+extension AVPlayerWrapper {
+    /**
+     Playback is playing.
+     */
+    func play() {
+        playing(isPlaying: true)
+        avPlayer.play()
+    }
+
+    func pause() {
+        playing(isPlaying: false)
+        avPlayer.pause()
+    }
+
+    func playing(isPlaying: Bool) {
+        self._isPlaying = isPlaying
+    }
 }

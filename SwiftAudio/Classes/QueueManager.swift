@@ -11,6 +11,8 @@ import Foundation
 class QueueManager<T> {
     
     private var _items: [T] = []
+    public var repeatId: RepeatSong = .on
+    public var isShuffle: Bool = false
     
     /**
      All items held by the queue.
@@ -34,14 +36,6 @@ class QueueManager<T> {
     }
     
     private var _currentIndex: Int = 0
-    
-    /**
-     The index of the current item.
-     Will be populated event though there is no current item (When the queue is empty).
-     */
-    public var currentIndex: Int {
-        return _currentIndex
-    }
     
     /**
      The current item for the queue.
@@ -79,7 +73,11 @@ class QueueManager<T> {
      */
     public func addItems(_ items: [T], at index: Int) throws {
         guard index >= 0 && _items.count > index else {
-            throw APError.QueueError.invalidIndex(index: index, message: "Index for addition has to be positive and smaller than the count of current items (\(_items.count))")
+            for item in items {
+                _items.append(item)
+            }
+            if (_currentIndex >= index) { _currentIndex = _currentIndex + items.count }
+            return
         }
         
         _items.insert(contentsOf: items, at: index)
@@ -93,32 +91,32 @@ class QueueManager<T> {
      - throws: `APError.QueueError`
      - returns: The next item.
      */
-    @discardableResult
-    public func next() throws -> T {
-        let nextIndex = _currentIndex + 1
-        guard _items.count > nextIndex else {
-            throw APError.QueueError.noNextItem
-        }
-        _currentIndex = nextIndex
-        return _items[nextIndex]
-    }
-    
-    /**
-     Get the previous item in the queue, if there are any.
-     Will update the current item.
-
-     - throws: `APError.QueueError`
-     - returns: The previous item.
-     */
-    @discardableResult
-    public func previous() throws -> T {
-        let previousIndex = _currentIndex - 1
-        guard previousIndex >= 0 else {
-            throw APError.QueueError.noPreviousItem
-        }
-        _currentIndex = previousIndex
-        return _items[previousIndex]
-    }
+//    @discardableResult
+//    public func next() throws -> T {
+//        let nextIndex = _currentIndex + 1
+//        guard _items.count > nextIndex else {
+//            throw APError.QueueError.noNextItem
+//        }
+//        _currentIndex = nextIndex
+//        return _items[nextIndex]
+//    }
+//
+//    /**
+//     Get the previous item in the queue, if there are any.
+//     Will update the current item.
+//
+//     - throws: `APError.QueueError`
+//     - returns: The previous item.
+//     */
+//    @discardableResult
+//    public func previous() throws -> T {
+//        let previousIndex = _currentIndex - 1
+//        guard previousIndex >= 0 else {
+//            throw APError.QueueError.noPreviousItem
+//        }
+//        _currentIndex = previousIndex
+//        return _items[previousIndex]
+//    }
     
     /**
      Jump to a position in the queue.
@@ -232,4 +230,163 @@ class QueueManager<T> {
         _items.removeAll()
     }
 
+}
+
+extension QueueManager {
+    
+    /**
+        The index of the current item.
+        Will be populated event though there is no current item (When the queue is empty).
+        */
+       public var currentIndex: Int {
+           get { return _items.count > _currentIndex ? _currentIndex : 0 }
+           set { _currentIndex = newValue}
+       }
+    
+    /**
+       - parameter item: Get `AudioItem`.
+       */
+      public func getItens() -> [T] {
+          return items
+      }
+    
+    /**
+       Add an array of items to the queue.
+       
+       - parameter items: The `AudioItem`s to be added.
+       */
+      public func addItemQueue(_ item: T) {
+
+          try? addItems([item], at: currentIndex+1)
+          
+          for (index, item) in _items.enumerated() {
+              (item as! DefaultAudioItem).position = index
+              _items[index] = item
+          }
+     
+      }
+      
+      /**
+       Put the player in shuffle position.
+       Will update the current item.
+       
+       - throws: `APError.QueueError`
+       - returns: The next item.
+       */
+      public func shuffle(isShuffle: Bool) {
+          self.isShuffle = isShuffle
+          
+          if isShuffle {
+              let audio = _items.remove(at: currentIndex)
+              _items.shuffle()
+              _items.insert(audio, at: 0)
+              _currentIndex = 0
+          } else {
+              let audio = items[currentIndex] as! DefaultAudioItem
+              var arrayItem = _items as! [DefaultAudioItem]
+              arrayItem.sort { $0.position < $1.position }
+              _items = arrayItem as! [T]
+              _currentIndex = audio.position
+          }
+          
+      }
+    
+    /**
+     Get the next item in the queue, if there are any.
+     Will update the current item.
+     
+     - throws: `APError.QueueError`
+     - returns: The next item.
+     */
+    @discardableResult
+    public func next() throws -> T {
+        switch repeatId {
+        case .on:
+            return try nextWithRepeat()
+        case .once:
+            return try nextOnceRepeat()
+        case .off:
+            return try nextWithoutRepeat()
+        }
+    }
+    
+    private func nextWithRepeat()  throws -> T {
+        var nextIndex = _currentIndex + 1
+        if _items.count <= nextIndex {
+            nextIndex = 0
+        }
+        guard let item = _items[safe: nextIndex] else {
+            throw APError.QueueError.noNextItem
+        }
+        _currentIndex = nextIndex
+        return item
+    }
+    
+    private func nextOnceRepeat()  throws -> T {
+        guard let item = _items[safe: _currentIndex] else {
+            throw APError.QueueError.noNextItem
+        }
+        return item
+    }
+    
+    private func nextWithoutRepeat() throws -> T {
+        let nextIndex = _currentIndex + 1
+        guard _items.count > nextIndex else {
+            throw APError.QueueError.noNextItem
+        }
+        _currentIndex = nextIndex
+        return _items[nextIndex]
+    }
+    
+    /**
+     Get the previous item in the queue, if there are any.
+     Will update the current item.
+
+     - throws: `APError.QueueError`
+     - returns: The previous item.
+     */
+    @discardableResult
+    public func previous() throws -> T {
+        return try previousWithRepeat()
+    }
+    
+    public func previousWithRepeat() throws -> T {
+        guard !_items.isEmpty else {
+            throw APError.QueueError.noPreviousItem
+        }
+        let previousIndex = _currentIndex - 1
+        guard previousIndex >= 0 else {
+            _currentIndex = _items.count - 1
+            return _items[_currentIndex]
+        }
+        _currentIndex = previousIndex
+        return _items[previousIndex]
+    }
+    
+    public func previousWithoutRepeat() throws -> T {
+        let previousIndex = _currentIndex - 1
+        guard !_items.isEmpty, previousIndex >= 0 else {
+            throw APError.QueueError.noPreviousItem
+        }
+        _currentIndex = previousIndex
+        return _items[previousIndex]
+    }
+    
+    public func changingPosition(fromIndex: Int, toIndex: Int) {
+        
+        let formAudio = _items[fromIndex]
+        _items.remove(at: fromIndex)
+        _items.insert(formAudio, at: toIndex)
+        
+        var newArrayAudio: [T] = []
+        for (index, element) in items.enumerated()  {
+            let newElement = element as! DefaultAudioItem
+            newElement.position = index
+            newArrayAudio.append(newElement as! T)
+        }
+        
+        _items = newArrayAudio
+        
+    }
+    
 }

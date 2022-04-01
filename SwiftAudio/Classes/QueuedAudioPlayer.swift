@@ -8,10 +8,16 @@
 import Foundation
 import MediaPlayer
 
+protocol QueuedAudioPlayerDelegate: AnyObject {
+    func changeQueue()
+}
+
 /**
  An audio player that can keep track of a queue of AudioItems.
  */
 public class QueuedAudioPlayer: AudioPlayer {
+    
+    var playerDelegate: QueuedAudioPlayerDelegate?
     
     let queueManager: QueueManager = QueueManager<AudioItem>()
     
@@ -23,6 +29,10 @@ public class QueuedAudioPlayer: AudioPlayer {
     
     public override var currentItem: AudioItem? {
         return queueManager.current
+    }
+    
+    public func getCurrentIndex() -> Int {
+        return queueManager.currentIndex
     }
     
     /**
@@ -64,6 +74,10 @@ public class QueuedAudioPlayer: AudioPlayer {
         return queueManager.nextItems
     }
     
+    public var sequenceOfItemsQueue: [AudioItem] {
+        return queueManager.nextItems + queueManager.previousItems
+    }
+
     /**
      Will replace the current item with a new one and load it into the player.
      
@@ -73,6 +87,7 @@ public class QueuedAudioPlayer: AudioPlayer {
     public override func load(item: AudioItem, playWhenReady: Bool) throws {
         try super.load(item: item, playWhenReady: playWhenReady)
         queueManager.replaceCurrentItem(with: item)
+        playerDelegate?.changeQueue()
     }
     
     /**
@@ -102,7 +117,9 @@ public class QueuedAudioPlayer: AudioPlayer {
     public func add(items: [AudioItem], playWhenReady: Bool = true) throws {
         if currentItem == nil {
             queueManager.addItems(items)
-            try self.load(item: currentItem!, playWhenReady: playWhenReady)
+            if let currentItem = currentItem {
+                try self.load(item: currentItem, playWhenReady: playWhenReady)
+            }
         }
         else {
             queueManager.addItems(items)
@@ -190,4 +207,40 @@ public class QueuedAudioPlayer: AudioPlayer {
         }
     }
     
+}
+
+extension QueuedAudioPlayer {
+    /**
+     Will replace the current index with a new one and load it into the player.
+     
+     - parameter index: Int value.
+     */
+    
+    public func getAudios() -> [AudioItem] {
+        return queueManager.getItens()
+    }
+    
+    public func currentItem(index: Int) {
+        queueManager.currentIndex = index
+    }
+    
+    public func repeatPlayer(repeatId: RepeatSong){
+        queueManager.repeatId = repeatId
+    }
+    
+    public func repeatPlayer() -> RepeatSong {
+        return queueManager.repeatId
+    }
+    
+    public func shufflePlayer(isShuffle: Bool) {
+        queueManager.shuffle(isShuffle: isShuffle)
+    }
+    
+    public func isShufflePlayer() -> Bool {
+        return queueManager.isShuffle
+    }
+    
+    public func addAudioQueue(audio: AudioItem) {
+        queueManager.addItemQueue(audio)
+    }
 }

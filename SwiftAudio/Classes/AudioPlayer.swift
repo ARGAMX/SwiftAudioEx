@@ -156,7 +156,9 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
                 throw APError.LoadError.invalidSourceUrl(item.getSourceUrl())
             }
         case .file:
-            url = URL(fileURLWithPath: item.getSourceUrl())
+            var urlString = item.getSourceUrl()
+            urlString.removeSubrange(urlString.range(of: "file://")!)
+            url = URL(fileURLWithPath: urlString)
         }
         
         wrapper.load(from: url,
@@ -227,29 +229,6 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
         }
     }
     
-    // MARK: - NowPlayingInfo
-    
-    /**
-     Loads NowPlayingInfo-meta values with the values found in the current `AudioItem`. Use this if a change to the `AudioItem` is made and you want to update the `NowPlayingInfoController`s values.
-     
-     Reloads:
-     - Artist
-     - Title
-     - Album title
-     - Album artwork
-     */
-    public func loadNowPlayingMetaValues() {
-        guard let item = currentItem else { return }
-        
-        nowPlayingInfoController.set(keyValues: [
-            MediaItemProperty.artist(item.getArtist()),
-            MediaItemProperty.title(item.getTitle()),
-            MediaItemProperty.albumTitle(item.getAlbumTitle()),
-        ])
-        
-        loadArtwork(forItem: item)
-    }
-    
     /**
      Resyncs the playbackvalues of the currently playing `AudioItem`.
      
@@ -269,7 +248,11 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
     }
     
     private func updateNowPlayingRate(_ rate: Float) {
-        nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.playbackRate(Double(rate)))
+        if #available(iOS 13.0, *) {
+            MPNowPlayingInfoCenter.default().playbackState = rate == 1.0 ? .playing : .paused
+        } else {
+            nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.playbackRate(Double(rate)))
+        }
     }
     
     private func updateNowPlayingCurrentTime(_ currentTime: Double) {
@@ -312,9 +295,8 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
             }
             setTimePitchingAlgorithmForCurrentItem()
         case .playing, .paused:
-            if (automaticallyUpdateNowPlayingInfo) {
-                updateNowPlayingPlaybackValues()
-            }
+            updateNowPlayingCurrentTime(currentTime)
+            updateNowPlayingRate(rate)
         default: break
         }
         self.event.stateChange.emit(data: state)
@@ -345,6 +327,54 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
     
     func AVWrapperDidRecreateAVPlayer() {
         self.event.didRecreateAVPlayer.emit(data: ())
+    }
+    
+}
+
+extension AudioPlayer {
+    
+    // MARK: - NowPlayingInfo
+    
+    /**
+     Loads NowPlayingInfo-meta values with the values found in the current `AudioItem`. Use this if a change to the `AudioItem` is made and you want to update the `NowPlayingInfoController`s values.
+     
+     Reloads:
+     - Artist
+     - Title
+     - Album title
+     - Album artwork
+     */
+    public func loadNowPlayingMetaValues() {
+        guard let item = currentItem else { return }
+        
+        nowPlayingInfoController.set(keyValues: [
+            MediaItemProperty.artist(item.getArtistName()),
+            MediaItemProperty.title(item.getSongName()),
+            MediaItemProperty.albumTitle(item.getAlbumPlayer().name),
+            ])
+        
+        loadArtwork(forItem: item)
+    }
+    
+    /**
+     The playback is playing.
+     */
+    public func isPlaying() -> Bool {
+        return self.wrapper.isPlaying
+    }
+    
+    /**
+     The playback is playing.
+     */
+    func showSecond() -> Double {
+        return self.wrapper.showSecond
+    }
+    
+    /**
+     Audio duration.
+     */
+    func audioDuration() -> Double {
+        return self.wrapper.audioDuration
     }
     
 }
