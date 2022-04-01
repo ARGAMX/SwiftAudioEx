@@ -366,14 +366,14 @@ extension AudioPlayer {
     /**
      The playback is playing.
      */
-    func showSecond() -> Double {
+    public func showSecond() -> Double {
         return self.wrapper.showSecond
     }
     
     /**
      Audio duration.
      */
-    func audioDuration() -> Double {
+    public func audioDuration() -> Double {
         return self.wrapper.audioDuration
     }
     
