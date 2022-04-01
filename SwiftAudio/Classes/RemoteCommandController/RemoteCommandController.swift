@@ -8,7 +8,7 @@
 import Foundation
 import MediaPlayer
 
-public protocol RemoteCommandable {
+public protocol RemoteCommandable: AnyObject {
     func getCommands() ->  [RemoteCommand]
 }
 

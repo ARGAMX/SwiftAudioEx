@@ -9,7 +9,7 @@ import Foundation
 import AVFoundation
 
 
-protocol AudioSession {
+protocol AudioSession: AnyObject {
     
     var isOtherAudioPlaying: Bool { get }
     
