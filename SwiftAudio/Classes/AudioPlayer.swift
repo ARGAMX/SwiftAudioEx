@@ -259,7 +259,7 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
         nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.elapsedPlaybackTime(currentTime))
     }
     
-    private func loadArtwork(forItem item: AudioItem) {
+    public func loadArtwork(forItem item: AudioItem) {
         item.getArtwork { (image) in
             if let image = image {
                 let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (size) -> UIImage in
@@ -334,27 +334,6 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
 extension AudioPlayer {
     
     // MARK: - NowPlayingInfo
-    
-    /**
-     Loads NowPlayingInfo-meta values with the values found in the current `AudioItem`. Use this if a change to the `AudioItem` is made and you want to update the `NowPlayingInfoController`s values.
-     
-     Reloads:
-     - Artist
-     - Title
-     - Album title
-     - Album artwork
-     */
-    public func loadNowPlayingMetaValues() {
-        guard let item = currentItem else { return }
-        
-        nowPlayingInfoController.set(keyValues: [
-            MediaItemProperty.artist(item.getArtistName()),
-            MediaItemProperty.title(item.getSongName()),
-            MediaItemProperty.albumTitle(item.getAlbumPlayer().name),
-            ])
-        
-        loadArtwork(forItem: item)
-    }
     
     /**
      The playback is playing.

@@ -19,7 +19,7 @@ public class QueuedAudioPlayer: AudioPlayer {
     
     public var playerDelegate: QueuedAudioPlayerDelegate?
     
-    let queueManager: QueueManager = QueueManager<AudioItem>()
+    public let queueManager: QueueManager = QueueManager<AudioItem>()
     
     /**
      Set wether the player should automatically play the next song when a song is finished.
@@ -207,40 +207,4 @@ public class QueuedAudioPlayer: AudioPlayer {
         }
     }
     
-}
-
-extension QueuedAudioPlayer {
-    /**
-     Will replace the current index with a new one and load it into the player.
-     
-     - parameter index: Int value.
-     */
-    
-    public func getAudios() -> [AudioItem] {
-        return queueManager.getItens()
-    }
-    
-    public func currentItem(index: Int) {
-        queueManager.currentIndex = index
-    }
-    
-    public func repeatPlayer(repeatId: RepeatSong){
-        queueManager.repeatId = repeatId
-    }
-    
-    public func repeatPlayer() -> RepeatSong {
-        return queueManager.repeatId
-    }
-    
-    public func shufflePlayer(isShuffle: Bool) {
-        queueManager.shuffle(isShuffle: isShuffle)
-    }
-    
-    public func isShufflePlayer() -> Bool {
-        return queueManager.isShuffle
-    }
-    
-    public func addAudioQueue(audio: AudioItem) {
-        queueManager.addItemQueue(audio)
-    }
 }
