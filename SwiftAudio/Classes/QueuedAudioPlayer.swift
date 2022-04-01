@@ -17,7 +17,7 @@ protocol QueuedAudioPlayerDelegate: AnyObject {
  */
 public class QueuedAudioPlayer: AudioPlayer {
     
-    var playerDelegate: QueuedAudioPlayerDelegate?
+    public var playerDelegate: QueuedAudioPlayerDelegate?
     
     let queueManager: QueueManager = QueueManager<AudioItem>()
     
