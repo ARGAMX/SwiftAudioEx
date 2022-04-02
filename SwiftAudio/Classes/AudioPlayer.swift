@@ -10,7 +10,7 @@ import MediaPlayer
 
 public typealias AudioPlayerState = AVPlayerWrapperState
 
-public class AudioPlayer: AVPlayerWrapperDelegate {
+open class AudioPlayer: AVPlayerWrapperDelegate {
     
     private var _wrapper: AVPlayerWrapperProtocol
     
@@ -168,9 +168,9 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
         
         self._currentItem = item
         
-        if (automaticallyUpdateNowPlayingInfo) {
-            self.loadNowPlayingMetaValues()
-        }
+//        if (automaticallyUpdateNowPlayingInfo) {
+//            self.loadNowPlayingMetaValues()
+//        }
         enableRemoteCommands(forItem: item)
     }
     

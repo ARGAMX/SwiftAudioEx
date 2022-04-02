@@ -8,7 +8,7 @@
 import Foundation
 
 
-class QueueManager<T> {
+public class QueueManager<T> {
     
     private var _items: [T] = []
     public var repeatId: RepeatSong = .on
@@ -235,61 +235,21 @@ class QueueManager<T> {
 extension QueueManager {
     
     /**
-        The index of the current item.
-        Will be populated event though there is no current item (When the queue is empty).
-        */
-       public var currentIndex: Int {
-           get { return _items.count > _currentIndex ? _currentIndex : 0 }
-           set { _currentIndex = newValue}
-       }
+     - parameter item: Get `AudioItem`.
+     */
+    public func getItems() -> [T] {
+        return items
+    }
+    
     
     /**
-       - parameter item: Get `AudioItem`.
-       */
-      public func getItens() -> [T] {
-          return items
-      }
-    
-    /**
-       Add an array of items to the queue.
-       
-       - parameter items: The `AudioItem`s to be added.
-       */
-      public func addItemQueue(_ item: T) {
-
-          try? addItems([item], at: currentIndex+1)
-          
-          for (index, item) in _items.enumerated() {
-              (item as! DefaultAudioItem).position = index
-              _items[index] = item
-          }
-     
-      }
-      
-      /**
-       Put the player in shuffle position.
-       Will update the current item.
-       
-       - throws: `APError.QueueError`
-       - returns: The next item.
-       */
-      public func shuffle(isShuffle: Bool) {
-          self.isShuffle = isShuffle
-          
-          if isShuffle {
-              let audio = _items.remove(at: currentIndex)
-              _items.shuffle()
-              _items.insert(audio, at: 0)
-              _currentIndex = 0
-          } else {
-              let audio = items[currentIndex] as! DefaultAudioItem
-              var arrayItem = _items as! [DefaultAudioItem]
-              arrayItem.sort { $0.position < $1.position }
-              _items = arrayItem as! [T]
-              _currentIndex = audio.position
-          }
-          
-      }
+     The index of the current item.
+     Will be populated event though there is no current item (When the queue is empty).
+     */
+    public var currentIndex: Int {
+        get { return _items.count > _currentIndex ? _currentIndex : 0 }
+        set { _currentIndex = newValue}
+    }
     
     /**
      Get the next item in the queue, if there are any.
@@ -315,17 +275,19 @@ extension QueueManager {
         if _items.count <= nextIndex {
             nextIndex = 0
         }
-        guard let item = _items[safe: nextIndex] else {
+        guard _items.count > nextIndex else {
             throw APError.QueueError.noNextItem
         }
+        let item = _items[nextIndex]
         _currentIndex = nextIndex
         return item
     }
     
     private func nextOnceRepeat()  throws -> T {
-        guard let item = _items[safe: _currentIndex] else {
+        guard _items.count > _currentIndex else {
             throw APError.QueueError.noNextItem
         }
+        let item = _items[_currentIndex]
         return item
     }
     
@@ -341,7 +303,7 @@ extension QueueManager {
     /**
      Get the previous item in the queue, if there are any.
      Will update the current item.
-
+     
      - throws: `APError.QueueError`
      - returns: The previous item.
      */
@@ -370,23 +332,6 @@ extension QueueManager {
         }
         _currentIndex = previousIndex
         return _items[previousIndex]
-    }
-    
-    public func changingPosition(fromIndex: Int, toIndex: Int) {
-        
-        let formAudio = _items[fromIndex]
-        _items.remove(at: fromIndex)
-        _items.insert(formAudio, at: toIndex)
-        
-        var newArrayAudio: [T] = []
-        for (index, element) in items.enumerated()  {
-            let newElement = element as! DefaultAudioItem
-            newElement.position = index
-            newArrayAudio.append(newElement as! T)
-        }
-        
-        _items = newArrayAudio
-        
     }
     
 }

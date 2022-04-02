@@ -15,7 +15,7 @@ public protocol QueuedAudioPlayerDelegate: AnyObject {
 /**
  An audio player that can keep track of a queue of AudioItems.
  */
-public class QueuedAudioPlayer: AudioPlayer {
+open class QueuedAudioPlayer: AudioPlayer {
     
     public var playerDelegate: QueuedAudioPlayerDelegate?
     
@@ -217,7 +217,7 @@ extension QueuedAudioPlayer {
      */
     
     public func getAudios() -> [AudioItem] {
-        queueManager.getItens()
+        queueManager.getItems()
     }
     
     public func currentItem(index: Int) {
@@ -232,15 +232,7 @@ extension QueuedAudioPlayer {
         queueManager.repeatId
     }
     
-    public func shufflePlayer(isShuffle: Bool) {
-        queueManager.shuffle(isShuffle: isShuffle)
-    }
-    
     public func isShufflePlayer() -> Bool {
         queueManager.isShuffle
-    }
-    
-    public func addAudioQueue(audio: AudioItem) {
-        queueManager.addItemQueue(audio)
     }
 }
