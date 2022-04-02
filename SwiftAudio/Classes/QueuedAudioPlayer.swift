@@ -208,3 +208,39 @@ public class QueuedAudioPlayer: AudioPlayer {
     }
     
 }
+
+extension QueuedAudioPlayer {
+    /**
+     Will replace the current index with a new one and load it into the player.
+     
+     - parameter index: Int value.
+     */
+    
+    public func getAudios() -> [AudioItem] {
+        queueManager.getItens()
+    }
+    
+    public func currentItem(index: Int) {
+        queueManager.currentIndex = index
+    }
+    
+    public func repeatPlayer(repeatId: RepeatSong){
+        queueManager.repeatId = repeatId
+    }
+    
+    public func repeatPlayer() -> RepeatSong {
+        queueManager.repeatId
+    }
+    
+    public func shufflePlayer(isShuffle: Bool) {
+        queueManager.shuffle(isShuffle: isShuffle)
+    }
+    
+    public func isShufflePlayer() -> Bool {
+        queueManager.isShuffle
+    }
+    
+    public func addAudioQueue(audio: AudioItem) {
+        queueManager.addItemQueue(audio)
+    }
+}

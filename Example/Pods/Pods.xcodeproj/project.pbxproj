@@ -20,6 +20,7 @@
 		0C88778813D0A6642A295141949E64BB /* BeAnInstanceOf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD037356D635910EBEB4E8179B98D5AD /* BeAnInstanceOf.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		0F79E5B03A31BA0434175AF8F9FFCC81 /* CwlCatchException.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE69C159D9317992CF1AD443B0EABD4 /* CwlCatchException.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		111C74E5ED488A0BF2A4C11B16840B97 /* URL+FileName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47286D86D2ECD0CA074AB37A9A1AC337 /* URL+FileName.swift */; };
+		1167CA9627F8BD32002E44DF /* RepeatSong.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1167CA9527F8BD32002E44DF /* RepeatSong.swift */; };
 		138FBF8D997CAE0748285D6A6E73FE85 /* AVPlayerItemNotificationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A4BD907C1BF047B1DB889831B3F6E3 /* AVPlayerItemNotificationObserver.swift */; };
 		1A8F096F13F5C7F9C3F46A0767E6963F /* NowPlayingInfoControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2470579FE874636DFF43938E8D9A36A1 /* NowPlayingInfoControllerProtocol.swift */; };
 		1D729B68239D861804633E6BF8A68F7D /* QuickTestSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F10F486CD72813246956BD13EF79F5 /* QuickTestSuite.swift */; };
@@ -193,6 +194,7 @@
 		0C8C8954498E96A380A9E019FA368062 /* Pods_SwiftAudio_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftAudio_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CFE2240B90DBC44697F16996798ADC0 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0DABEC063D1E1E8511156A19A9DFECE8 /* BeVoid.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeVoid.swift; path = Sources/Nimble/Matchers/BeVoid.swift; sourceTree = "<group>"; };
+		1167CA9527F8BD32002E44DF /* RepeatSong.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RepeatSong.swift; path = SwiftAudio/Classes/RepeatSong.swift; sourceTree = "<group>"; };
 		1739C515421AC66DD532F4238BF24A75 /* ErrorUtility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ErrorUtility.swift; path = Sources/Quick/ErrorUtility.swift; sourceTree = "<group>"; };
 		18339FBFDF6F6E6A5A300A7C5F9B32A5 /* ToSucceed.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ToSucceed.swift; path = Sources/Nimble/Matchers/ToSucceed.swift; sourceTree = "<group>"; };
 		190117E9FDE1039113174B4F50D64098 /* Stringers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Stringers.swift; path = Sources/Nimble/Utils/Stringers.swift; sourceTree = "<group>"; };
@@ -489,6 +491,7 @@
 				299F2A2E2BC96FFA1F65CF4B14BD88C2 /* Event.swift */,
 				9DE7B22505EC46718F0808B87FE365F4 /* QueuedAudioPlayer.swift */,
 				9392FD0DA36E33BC844809A10BF065D8 /* QueueManager.swift */,
+				1167CA9527F8BD32002E44DF /* RepeatSong.swift */,
 				96CC2425740C29CC74B0062A692610DD /* TimeEventFrequency.swift */,
 				45E6AC134E96FAEC12BDCC6DD8A100E4 /* AudioSessionController */,
 				320FD80924E29D84FCE47ADBD310E4D6 /* AVPlayerWrapper */,
@@ -1007,6 +1010,7 @@
 				C28EDA5B19FD9C8F501754BE1460A79C /* NowPlayingInfoKeyValue.swift in Sources */,
 				5F975077CC1B176BEBB879B3ABE9AEA3 /* NowPlayingInfoProperty.swift in Sources */,
 				BFD0B9E2F0DD03983D309A2F09CAEEA4 /* QueuedAudioPlayer.swift in Sources */,
+				1167CA9627F8BD32002E44DF /* RepeatSong.swift in Sources */,
 				D291658DD24FEBF18C287B8548DA1B06 /* QueueManager.swift in Sources */,
 				D20D8F23B1AC8290FAC31FEECAFB5F08 /* RemoteCommand.swift in Sources */,
 				F13B3CBC122B1A54C8D87DEEB715E34A /* RemoteCommandController.swift in Sources */,
