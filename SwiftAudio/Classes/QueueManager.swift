@@ -10,7 +10,9 @@ import Foundation
 
 public class QueueManager<T> {
     
-    private var _items: [T] = []
+    public var _items: [T] = []
+    public var _currentIndex: Int = 0
+    
     public var repeatId: RepeatSong = .on
     public var isShuffle: Bool = false
     
@@ -34,8 +36,6 @@ public class QueueManager<T> {
         }
         return Array(_items[0..<_currentIndex])
     }
-    
-    private var _currentIndex: Int = 0
     
     /**
      The current item for the queue.
