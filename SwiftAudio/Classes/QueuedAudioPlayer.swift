@@ -84,7 +84,7 @@ open class QueuedAudioPlayer: AudioPlayer {
      - parameter item: The AudioItem to replace the current item.
      - throws: APError.LoadError
      */
-    public override func load(item: AudioItem, playWhenReady: Bool) throws {
+    open override func load(item: AudioItem, playWhenReady: Bool) throws {
         try super.load(item: item, playWhenReady: playWhenReady)
         queueManager.replaceCurrentItem(with: item)
         playerDelegate?.changeQueue()
